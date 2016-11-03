@@ -49,11 +49,7 @@ namespace SingleResponsibilityPrinciple
 
         private bool ValidateTradeData(string[] fields, int currentLine)
         {
-            if(fields.Length < 4 || fields.Length > 6)
-            {
-                LogMessage("Warn: Trade currencies on Line {0} do not meet requirements");
-                return true;
-            }
+           
             if (fields.Length != 3)
             {
                 LogMessage("WARN: Line {0} malformed. Only {1} field(s) found.", currentLine, fields.Length);
@@ -79,13 +75,26 @@ namespace SingleResponsibilityPrinciple
                 LogMessage("WARN: Trade price on line {0} not a valid decimal: '{1}'", currentLine, fields[2]);
                 return false;
             }
+            if (tradeAmount > 100000)
+            {
+                LogMessage("Warn: Trade amount doesn't meet requirements", currentLine, fields.Length);
+                return false;
+            }
+            if (tradeAmount < 1000)
+            {
+                LogMessage("Warn: Trade amount doesn't meet requirements", currentLine, fields.Length);
+                return false;
+            }
 
             return true;
         }
 
         private void LogMessage(string message, params object[] args)
         {
-            Console.WriteLine(message, args);
+            using (StreamWriter logfile = File.AppendText("log.xml"))
+            {
+                logfile.WriteLine("<log><type>INFO</type><message> " + message + "</message></log> ", args);
+            }
         }
 
         private TradeRecord MapTradeDataToTradeRecord(string[] fields)
