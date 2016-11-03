@@ -49,6 +49,11 @@ namespace SingleResponsibilityPrinciple
 
         private bool ValidateTradeData(string[] fields, int currentLine)
         {
+            if(fields.Length < 4 || fields.Length > 6)
+            {
+                LogMessage("Warn: Trade currencies on Line {0} do not meet requirements");
+                return true;
+            }
             if (fields.Length != 3)
             {
                 LogMessage("WARN: Line {0} malformed. Only {1} field(s) found.", currentLine, fields.Length);
